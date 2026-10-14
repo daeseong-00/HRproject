@@ -1,6 +1,4 @@
-package HR.entity;
-
-import java.time.LocalDateTime;
+package hr.entity;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -14,7 +12,8 @@ import java.time.LocalDateTime;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class CompanyPolicyEntity {
-	@Id
+
+    @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "policy_id")
     private Long id;
@@ -22,18 +21,14 @@ public class CompanyPolicyEntity {
     @Column(name = "company_name", nullable = false, length = 100)
     private String companyName;
 
-
     @Column(name = "allowed_office_ip", nullable = false, length = 50)
     private String allowedOfficeIp;
-
 
     @Column(name = "work_start_time", nullable = false, length = 8)
     private String workStartTime;
 
-
     @Column(name = "work_end_time", nullable = false, length = 8)
     private String workEndTime;
-
 
     @Column(name = "lunch_break_minutes", nullable = false)
     private Integer lunchBreakMinutes;
