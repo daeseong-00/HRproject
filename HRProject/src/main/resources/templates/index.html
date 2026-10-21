@@ -1,67 +1,29 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Smart HR & Attendance 포털</title>
-  <!-- Bootstrap 5 CSS & Bootstrap Icons -->
+  <title>Smart HR - ダッシュボード</title>
+  <!-- Bootstrap 5 CSS & Icons -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
   <style>
-    body {
-      background-color: #f4f6f9;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    body { 
+      background-color: #f4f6f9; 
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif; 
     }
-    .sidebar {
-      min-height: 100vh;
-      background-color: #1e293b;
-      color: #cbd5e1;
-    }
-    .sidebar .nav-link {
-      color: #94a3b8;
-      border-radius: 8px;
-      margin-bottom: 4px;
-      padding: 10px 16px;
-    }
-    .sidebar .nav-link:hover, .sidebar .nav-link.active {
-      color: #ffffff;
-      background-color: #334155;
-    }
-    .badge-card {
-      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-      color: white;
-      border-radius: 16px;
-      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.2);
-    }
-    .digital-chip {
-      width: 44px;
-      height: 32px;
-      background: linear-gradient(135deg, #fbbf24 0%, #d97706 100%);
-      border-radius: 6px;
-      display: inline-block;
-    }
-    .stat-card {
-      border: none;
-      border-radius: 12px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.04);
-      transition: transform 0.2s;
-    }
-    .stat-card:hover {
-      transform: translateY(-2px);
-    }
-    .pulse-dot {
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-      display: inline-block;
-      margin-right: 6px;
-    }
+    .sidebar { min-height: 100vh; background-color: #1e293b; color: #cbd5e1; }
+    .sidebar .nav-link { color: #94a3b8; border-radius: 8px; margin-bottom: 4px; padding: 10px 16px; }
+    .sidebar .nav-link:hover, .sidebar .nav-link.active { color: #ffffff; background-color: #334155; }
+    .badge-card { background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); color: white; border-radius: 16px; box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.2); }
+    .digital-chip { width: 44px; height: 32px; background: linear-gradient(135deg, #fbbf24 0%, #d97706 100%); border-radius: 6px; display: inline-block; }
+    .stat-card { border: none; border-radius: 12px; box-shadow: 0 2px 6px rgba(0,0,0,0.04); }
   </style>
 </head>
 <body>
 
 <div class="d-flex">
-  <!-- 1. 사이드바 네비게이션 -->
+  <!-- 1. サイドバー ナビゲーション -->
   <aside class="sidebar p-3 d-flex flex-column" style="width: 260px;">
     <div class="d-flex align-items-center mb-4 px-2">
       <i class="bi bi-building-fill-check fs-3 text-primary me-2"></i>
@@ -70,63 +32,54 @@
     
     <ul class="nav nav-pills flex-column mb-auto">
       <li class="nav-item">
-        <a href="#" class="nav-link active"><i class="bi bi-grid-fill me-2"></i> 대시보드</a>
+        <a href="#" class="nav-link active"><i class="bi bi-grid-fill me-2"></i> ダッシュボード</a>
       </li>
       <li>
-        <a href="#" class="nav-link"><i class="bi bi-clock-history me-2"></i> 내 근태 현황</a>
+        <a href="#" class="nav-link"><i class="bi bi-clock-history me-2"></i> 勤怠実績照会</a>
       </li>
       <li>
-        <a href="#" class="nav-link"><i class="bi bi-file-earmark-check me-2"></i> 전자결재 (휴가/재택)</a>
-      </li>
+ 		 <a th:href="@{/approval/list}" class="nav-link"><i class="bi bi-file-earmark-check me-2"></i> 電子稟議・申請</a>
+	  </li>
       <hr class="text-secondary my-3">
-      <div class="small text-muted px-3 mb-2 fw-semibold">관리자 메뉴</div>
+      <div class="small text-muted px-3 mb-2 fw-semibold">管理者メニュー</div>
       <li>
-        <a href="#" class="nav-link"><i class="bi bi-people-fill me-2"></i> 부서원 근태 관리</a>
+        <a href="#" class="nav-link"><i class="bi bi-people-fill me-2"></i> 部署勤怠管理</a>
       </li>
       <li>
-        <a href="#" class="nav-link"><i class="bi bi-shield-lock-fill me-2"></i> 전사 시스템 설정</a>
+        <a href="#" class="nav-link"><i class="bi bi-shield-lock-fill me-2"></i> システム設定</a>
       </li>
     </ul>
 
-    <!-- 하단 로그인 정보 -->
+    <!-- ユーザープロフィール & ログアウト -->
     <div class="pt-3 border-top border-secondary d-flex align-items-center justify-content-between">
       <div class="d-flex align-items-center">
         <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center fw-bold me-2" style="width: 36px; height: 36px;">
-          백
+          <span th:text="${#strings.substring(loginUser.name, 0, 1)}">社</span>
         </div>
         <div>
-          <div class="text-white small fw-bold">백대성 사원</div>
-          <div class="text-muted" style="font-size: 11px;">개발1팀 (사번: 20261012)</div>
+          <div class="text-white small fw-bold" th:text="${loginUser.name} + ' ' +${loginUser.position}">山田 太郎</div>
+          <div class="text-muted" style="font-size: 11px;" th:text="${loginUser.department != null ? loginUser.department.deptName : '未配属'}">開発1チーム</div>
         </div>
       </div>
-      <button class="btn btn-sm btn-outline-secondary text-white-50 border-0" title="로그아웃"><i class="bi bi-box-arrow-right"></i></button>
+      <form th:action="@{/logout}" method="post" class="m-0">
+        <button type="submit" class="btn btn-sm btn-outline-secondary text-white-50 border-0" title="ログアウト">
+          <i class="bi bi-box-arrow-right"></i>
+        </button>
+      </form>
     </div>
   </aside>
 
-  <!-- 2. 본문 컨텐츠 영역 -->
+  <!-- 2. メインコンテンツ -->
   <main class="flex-grow-1 p-4 overflow-auto" style="height: 100vh;">
-    <!-- 상단 헤더 & 시연용 네트워크 시뮬레이터 -->
     <div class="d-flex justify-content-between align-items-center mb-4">
       <div>
-        <h4 class="fw-bold mb-1">임직원 업무 포털 대시보드</h4>
-        <p class="text-muted small mb-0">오늘도 활기찬 하루 되세요!</p>
-      </div>
-      <!-- [시연 트릭] 사내/사외 IP 네트워크 가상 토글 -->
-      <div class="bg-white p-2 px-3 rounded-pill border shadow-sm d-flex align-items-center gap-3">
-        <span class="small fw-semibold text-secondary"><i class="bi bi-router me-1"></i>접속 네트워크:</span>
-        <div class="form-check form-switch mb-0">
-          <input class="form-check-input" type="checkbox" id="networkToggle" checked>
-          <label class="form-check-label small fw-bold text-primary" for="networkToggle" id="networkLabel">
-            🏢 사내 Wi-Fi (본사 공인 IP)
-          </label>
-        </div>
+        <h4 class="fw-bold mb-1"><span th:text="${loginUser.name}">社員</span>さん、お疲れ様です！</h4>
+        <p class="text-muted small mb-0">スマート勤怠＆電子決済統合ポータルへようこそ。</p>
       </div>
     </div>
 
-    <!-- 3. 핵심 카드 그리드 -->
     <div class="row g-4 mb-4">
-      
-      <!-- [카드 A] 디지털 사원증 (출퇴근 태그 액션 존) -->
+      <!-- デジタル社員証カード (打刻エリア) -->
       <div class="col-lg-5">
         <div class="badge-card p-4 h-100 d-flex flex-column justify-content-between">
           <div>
@@ -142,181 +95,228 @@
                 <i class="bi bi-person-fill text-secondary"></i>
               </div>
               <div>
-                <h5 class="fw-bold mb-1 text-white">백대성 (Developer)</h5>
-                <div class="text-white-50 small">소속: 플랫폼개발본부 개발1팀</div>
-                <div class="text-white-50 small font-monospace">ID: EMP-20261012</div>
+                <h5 class="fw-bold mb-1 text-white" th:text="${loginUser.name} + ' (' +${loginUser.position} + ')'">社員名 (役職)</h5>
+                <div class="text-white-50 small" th:text="'所属: ' + (${loginUser.department != null ? loginUser.department.deptName : '未配属'})">所属: 開発1チーム</div>
+                <div class="text-white-50 small font-monospace" th:text="'社員番号: ' + ${loginUser.employeeNo}">社員番号: 20261012</div>
               </div>
             </div>
 
-            <!-- 현재 시간 & 상태창 -->
+            <!-- 現在時刻 & 状態表示 -->
             <div class="bg-white bg-opacity-10 p-3 rounded-3 mt-3 text-center">
-              <div class="text-white-50 small mb-1" id="currentDate">2026년 10월 12일 월요일</div>
-              <div class="fs-4 fw-bold font-monospace text-white" id="currentTime">08:55:00</div>
+              <div class="fs-4 fw-bold font-monospace text-white" id="clock">00:00:00</div>
               <div class="mt-2">
-                <span class="badge bg-secondary px-3 py-2" id="attendanceStatusBadge">
-                  <span class="pulse-dot bg-warning"></span>미출근 (태그 대기)
+                <!-- 1. 미출근 상태 -->
+                <span th:if="${todayAttendance == null}" 
+                      class="badge bg-secondary px-3 py-2" id="attendanceBadge">
+                  未出勤 (打刻待ち)
+                </span>
+
+                <!-- 2. 출근 완료 & 퇴근 전 상태 -->
+                <span th:if="${todayAttendance != null and todayAttendance.checkOutTime == null}" 
+                      th:classappend="${todayAttendance.workType == 'REMOTE'} ? 'bg-info text-dark' : 'bg-success'"
+                      class="badge px-3 py-2" id="attendanceBadge">
+                  🟢 勤務中 (<span th:text="${todayAttendance.workType == 'REMOTE' ? 'テレワーク 🏠' : '出社 🏢'}">出社</span> / 
+                  <span th:text="${todayAttendance.status == 'LATE' ? '遅刻' : '通常'}">通常</span> / 
+                  <span th:text="${#temporals.format(todayAttendance.checkInTime, 'HH:mm:ss')}">09:00:00</span>)
+                </span>
+
+                <!-- 3. 퇴근 완료 상태 -->
+                <span th:if="${todayAttendance != null and todayAttendance.checkOutTime != null}" 
+                      class="badge bg-dark px-3 py-2" id="attendanceBadge">
+                  ⚫ 業務終了 (退勤: <span th:text="${#temporals.format(todayAttendance.checkOutTime, 'HH:mm:ss')}">18:00:00</span>)
                 </span>
               </div>
             </div>
           </div>
 
-          <!-- 태그 버튼 영역 (Ajax 시뮬레이션) -->
-          <div class="mt-4">
-            <button class="btn btn-primary w-100 py-3 fw-bold shadow-lg d-flex align-items-center justify-content-center gap-2" id="btnTag">
-              <i class="bi bi-broadcast fs-5"></i>
-              <span id="btnTagText">사원증 태그하기 (출근)</span>
+          <!-- 打刻 버튼 영역 -->
+          <div class="mt-4" id="actionBtnArea">
+            <!-- 1. 미출근 시: 출근 버튼 -->
+            <button th:if="${todayAttendance == null}" 
+                    class="btn btn-primary w-100 py-3 fw-bold shadow-lg" id="btnCheckIn">
+              <i class="bi bi-broadcast fs-5 me-1"></i> 社員証タッチ (出勤打刻)
             </button>
-            <div class="text-center text-white-50 mt-2" style="font-size: 12px;" id="tagSubText">
-              * 단말기 터치 동작 시 비동기(AJAX)로 근태가 기록됩니다.
+
+            <!-- 2. 근무 중일 때: 퇴근 버튼 -->
+            <button th:if="${todayAttendance != null and todayAttendance.checkOutTime == null}" 
+                    class="btn btn-danger w-100 py-3 fw-bold shadow-lg" id="btnCheckOut">
+              <i class="bi bi-box-arrow-right fs-5 me-1"></i> 社員証タッチ (退勤打刻)
+            </button>
+
+            <!-- 3. 퇴근 완료 시: 업무 종료 비활성화 버튼 -->
+            <button th:if="${todayAttendance != null and todayAttendance.checkOutTime != null}" 
+                    class="btn btn-secondary w-100 py-3 fw-bold shadow-lg" disabled>
+              <i class="bi bi-check-circle-fill fs-5 me-1"></i> 本日の業務終了
+            </button>
+
+            <!-- 개발/테스트용 오늘 근태 리셋 버튼 -->
+            <div class="text-end mt-2">
+              <button type="button" class="btn btn-link btn-sm text-white-50 text-decoration-none p-0" id="btnResetToday" style="font-size: 11px;">
+                <i class="bi bi-arrow-counterclockwise"></i> [Dev] 本日の打刻をリセット (초기화)
+              </button>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- [카드 B] 월간 근태 요약 & 최근 결재 현황 -->
+      <!-- 右側：有給残日数・勤務統計 -->
       <div class="col-lg-7">
         <div class="row g-3 mb-3">
-          <div class="col-sm-4">
+          <div class="col-sm-6">
             <div class="card stat-card p-3 text-center">
-              <div class="text-muted small mb-1">당월 출근 일수</div>
-              <div class="fs-4 fw-bold text-dark"><span id="statWorkDays">15</span> <span class="fs-6 fw-normal text-muted">/ 22일</span></div>
+              <div class="text-muted small mb-1">有給休暇 残日数</div>
+              <div class="fs-4 fw-bold text-primary">
+                <span th:text="${loginUser.remainLeaveDays}">15.0</span> <span class="fs-6 fw-normal text-muted">日</span>
+              </div>
             </div>
           </div>
-          <div class="col-sm-4">
+          <div class="col-sm-6">
             <div class="card stat-card p-3 text-center">
-              <div class="text-muted small mb-1">잔여 연차</div>
-              <div class="fs-4 fw-bold text-primary">12.5 <span class="fs-6 fw-normal text-muted">일</span></div>
-            </div>
-          </div>
-          <div class="col-sm-4">
-            <div class="card stat-card p-3 text-center">
-              <div class="text-muted small mb-1">재택근무 일수</div>
-              <div class="fs-4 fw-bold text-info"><span id="statRemoteDays">2</span> <span class="fs-6 fw-normal text-muted">회</span></div>
+              <div class="text-muted small mb-1">権限ロール</div>
+              <div class="fs-4 fw-bold text-dark">
+                <span th:text="${loginUser.role}">ROLE_USER</span>
+              </div>
             </div>
           </div>
         </div>
 
-        <!-- 전자결재 현황 요약 카드 -->
+        <!-- 電子決済 最近の申請内訳 -->
         <div class="card stat-card p-4">
           <div class="d-flex justify-content-between align-items-center mb-3">
-            <h6 class="fw-bold mb-0"><i class="bi bi-file-earmark-text text-primary me-2"></i>나의 최근 전자결재 진행 내역</h6>
-            <a href="#" class="text-decoration-none small text-muted">더보기 <i class="bi bi-chevron-right"></i></a>
+            <h6 class="fw-bold mb-0"><i class="bi bi-file-earmark-text text-primary me-2"></i>直近の申請・承認状況</h6>
+            <a href="#" class="text-decoration-none small text-muted">もっと見る <i class="bi bi-chevron-right"></i></a>
           </div>
           <div class="table-responsive">
             <table class="table table-hover align-middle mb-0" style="font-size: 13px;">
               <thead class="table-light">
                 <tr>
-                  <th>구분</th>
-                  <th>신청 내용</th>
-                  <th>대상 일자</th>
-                  <th class="text-center">상태</th>
+                  <th>区分</th>
+                  <th>申請件名</th>
+                  <th>対象日</th>
+                  <th class="text-center">状態</th>
                 </tr>
               </thead>
               <tbody>
                 <tr>
-                  <td><span class="badge bg-info-subtle text-info border">재택근무</span></td>
-                  <td class="fw-semibold">10/12(월) 코어 API 서버 개발 재택</td>
-                  <td class="text-muted">2026-10-12</td>
-                  <td class="text-center"><span class="badge bg-success">승인완료 (도장 쾅)</span></td>
-                </tr>
-                <tr>
-                  <td><span class="badge bg-primary-subtle text-primary border">연차</span></td>
-                  <td class="fw-semibold">10/20 개인 사유 정기 연차</td>
-                  <td class="text-muted">2026-10-20</td>
-                  <td class="text-center"><span class="badge bg-warning text-dark">검토 대기 (팀장)</span></td>
+                  <td><span class="badge bg-info-subtle text-info border">テレワーク</span></td>
+                  <td class="fw-semibold">APIサーバー開発に伴う在宅勤務申請</td>
+                  <td class="text-muted">2026-10-19</td>
+                  <td class="text-center"><span class="badge bg-success">承認完了</span></td>
                 </tr>
               </tbody>
             </table>
           </div>
         </div>
+
       </div>
     </div>
   </main>
 </div>
 
-<!-- jQuery & Bootstrap Bundle JS -->
+<!-- jQuery CDN -->
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
   // 1. 실시간 시계 연동
   function updateClock() {
     const now = new Date();
-    const hours = String(now.getHours()).padStart(2, '0');
-    const minutes = String(now.getMinutes()).padStart(2, '0');
-    const seconds = String(now.getSeconds()).padStart(2, '0');
-    $('#currentTime').text(`${hours}:${minutes}:${seconds}`);
+    const h = String(now.getHours()).padStart(2, '0');
+    const m = String(now.getMinutes()).padStart(2, '0');
+    const s = String(now.getSeconds()).padStart(2, '0');
+    document.getElementById('clock').innerText = `${h}:${m}:${s}`;
   }
   setInterval(updateClock, 1000);
   updateClock();
 
-  // 2. 사내/사외 가상 네트워크 스위치 이벤트
-  let isOfficeNetwork = true;
-  $('#networkToggle').on('change', function() {
-    isOfficeNetwork = $(this).is(':checked');
-    if (isOfficeNetwork) {
-      $('#networkLabel').html('🏢 사내 Wi-Fi (본사 공인 IP)').removeClass('text-danger').addClass('text-primary');
-    } else {
-      $('#networkLabel').html('🏠 외부 네트워크 (사외 IP 감지)').removeClass('text-primary').addClass('text-danger');
-    }
+  // 2. 출근 타코쿠 (순수 IP 검증 호출)
+  $(document).on('click', '#btnCheckIn', function() {
+    const $btn = $(this);$btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-1"></span> 通信中...');
+
+    $.ajax({
+      url: '/api/attendance/check-in',
+      type: 'POST',
+      dataType: 'json',
+      success: function(res) {
+        if (res.success || res.isSuccess) {
+          alert(res.message);
+
+          let statusText = (res.status === 'LATE') ? '遅刻' : '通常';
+          let typeText = (res.workType === 'REMOTE') ? 'テレワーク 🏠' : '出社 🏢';
+          let badgeClass = (res.workType === 'REMOTE') ? 'bg-info text-dark' : 'bg-success';
+
+          $('#attendanceBadge')
+            .removeClass('bg-secondary bg-success bg-info text-dark')
+            .addClass(badgeClass)
+            .html(`🟢 勤務中 (${typeText} / ${statusText} / ${res.checkInTime})`);
+
+          // 버튼을 퇴근 버튼으로 전환
+          $btn.prop('disabled', false)
+            .removeClass('btn-primary')
+            .addClass('btn-danger')
+            .attr('id', 'btnCheckOut')
+            .html('<i class="bi bi-box-arrow-right fs-5 me-1"></i> 社員証タッチ (退勤打刻)');
+        } else {
+          alert(res.message);
+          $btn.prop('disabled', false).html('<i class="bi bi-broadcast fs-5 me-1"></i> 社員証タッチ (出勤打刻)');
+        }
+      },
+      error: function(xhr) {
+        console.error("Error Status:", xhr.status, xhr.responseText);
+        alert(`打刻処理中にエラーが発生しました。(HTTP ${xhr.status})`);
+        $btn.prop('disabled', false).html('<i class="bi bi-broadcast fs-5 me-1"></i> 社員証タッチ (出勤打刻)');
+      }
+    });
   });
 
-  // 3. 상태 관리 변수 (0: 미출근, 1: 출근완료, 2: 퇴근완료)
-  let attendanceState = 0;
-  // 재택근무 사전 승인 여부 시뮬레이션 (true/false)
-  const hasApprovedRemotePlan = true; 
+  // 3. 퇴근 타코쿠
+  $(document).on('click', '#btnCheckOut', function() {
+    if (!confirm('本日の業務を終了し、退勤打刻しますか？\n(오늘 업무를 종료하고 퇴근하시겠습니까?)')) {
+      return;
+    }
 
-  // 4. 사원증 태그 버튼 클릭 (AJAX 시뮬레이션)
-  $('#btnTag').on('click', function() {
-    const $btn =$(this);
-    
-    // 미출근 상태 -> 출근 시도
-    if (attendanceState === 0) {
-      $btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm"></span> 단말기 통신 중...');
+    const $btn = $(this);$btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-1"></span> 計算中...');
 
-      setTimeout(function() {
-        $btn.prop('disabled', false);
+    $.ajax({
+      url: '/api/attendance/check-out',
+      type: 'POST',
+      dataType: 'json',
+      success: function(res) {
+        if (res.success || res.isSuccess) {
+          alert(`${res.message}\n総勤務時間: ${res.formattedWorkTime} (残業: ${res.overtimeMinutes}分)`);
 
-        // [검증 분기 1] 사내 네트워크인 경우: 본사 출근
-        if (isOfficeNetwork) {
-          attendanceState = 1;
-          $('#attendanceStatusBadge').removeClass('bg-secondary bg-info').addClass('bg-success')
-            .html('<span class="pulse-dot bg-light"></span>근무 중 (본사 출근 🏢)');
-          $btn.removeClass('btn-primary').addClass('btn-danger')
-            .html('<i class="bi bi-box-arrow-right fs-5"></i><span>사원증 태그하기 (퇴근)</span>');
-          $('#tagSubText').text('퇴근 시 태그하시면 일일 총 근무시간이 정산됩니다.');
-          alert('[출근 성공]\n사내 공인 IP 확인 완료: 정상적으로 본사 출근 처리되었습니다.');
-        } 
-        // [검증 분기 2] 사외 네트워크인 경우: 사전 결재 여부 확인
-        else {
-          if (hasApprovedRemotePlan) {
-            attendanceState = 1;
-            $('#attendanceStatusBadge').removeClass('bg-secondary bg-success').addClass('bg-info text-dark')
-              .html('<span class="pulse-dot bg-primary"></span>근무 중 (재택근무 🏠)');
-            $btn.removeClass('btn-primary').addClass('btn-danger')
-              .html('<i class="bi bi-box-arrow-right fs-5"></i><span>사원증 태그하기 (퇴근)</span>');
-            $('#tagSubText').text('퇴근 시 태그하시면 일일 총 근무시간이 정산됩니다.');
-            alert('[출근 성공]\n사외 IP 감지됨: 승인된 재택근무 신청 내역이 확인되어 [재택근무]로 정상 출근되었습니다.');
-          } else {
-            alert('[출근 불가 (부정 출근 방지)]\n사내 네트워크가 아닙니다.\n승인된 재택근무 결재 내역이 존재하지 않아 출근할 수 없습니다.');
-          }
+          $('#attendanceBadge')
+            .removeClass('bg-success bg-info text-dark')
+            .addClass('bg-dark')
+            .html(`⚫ 業務終了 (退勤: ${res.checkOutTime})`);
+
+          $btn.removeClass('btn-danger')
+            .addClass('btn-secondary')
+            .prop('disabled', true)
+            .removeAttr('id')
+            .html('<i class="bi bi-check-circle-fill fs-5 me-1"></i> 本日の業務終了');
+        } else {
+          alert(res.message);
+          $btn.prop('disabled', false).html('<i class="bi bi-box-arrow-right fs-5 me-1"></i> 社員証タッチ (退勤打刻)');
         }
-      }, 700);
-    } 
-    // 출근 상태 -> 퇴근 시도
-    else if (attendanceState === 1) {
-      if (confirm('오늘 업무를 마치고 퇴근 태그하시겠습니까?')) {
-        attendanceState = 2;
-        $('#attendanceStatusBadge').removeClass('bg-success bg-info text-dark').addClass('bg-dark text-white')
-          .html('<span class="pulse-dot bg-secondary"></span>업무 종료 (퇴근 완료)');
-        $btn.removeClass('btn-danger').addClass('btn-secondary').prop('disabled', true)
-          .html('<i class="bi bi-check-circle-fill fs-5"></i><span>오늘 업무 종료</span>');
-        $('#tagSubText').text('오늘의 근무 시간이 안전하게 기록되었습니다.');
-        alert('[퇴근 처리 완료]\n수고하셨습니다! 총 근무시간이 정산되었습니다.');
+      },
+      error: function(xhr) {
+        console.error("Error Status:", xhr.status, xhr.responseText);
+        alert(`退勤処理中にエラーが発生しました。(HTTP ${xhr.status})`);
+        $btn.prop('disabled', false).html('<i class="bi bi-box-arrow-right fs-5 me-1"></i> 社員証タッチ (退勤打刻)');
       }
+    });
+  });
+
+  // 4. 개발/테스트용 오늘 근태 리셋 버튼
+  $(document).on('click', '#btnResetToday', function() {
+    if (confirm('本日の打刻データを初期化しますか？')) {
+      $.post('/api/attendance/reset-today', function() {
+        location.reload();
+      }).fail(function(xhr) {
+        alert('リセット処理中にエラーが発生しました。(HTTP ' + xhr.status + ')');
+      });
     }
   });
 </script>
-
 </body>
 </html>

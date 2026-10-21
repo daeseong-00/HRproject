@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Smart HR - 電子稟議・申請作成</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+  <style>
+    body { 
+      background-color: #f4f6f9; 
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif; 
+    }
+    .sidebar { min-height: 100vh; background-color: #1e293b; color: #cbd5e1; }
+    .sidebar .nav-link { color: #94a3b8; border-radius: 8px; margin-bottom: 4px; padding: 10px 16px; }
+    .sidebar .nav-link:hover, .sidebar .nav-link.active { color: #ffffff; background-color: #334155; }
+    .form-card { border: none; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+  </style>
+</head>
+<body>
+
+<div class="d-flex">
+  <!-- 1. 사이드바 네비게이션 -->
+  <aside class="sidebar p-3 d-flex flex-column" style="width: 260px;">
+    <div class="d-flex align-items-center mb-4 px-2">
+      <i class="bi bi-building-fill-check fs-3 text-primary me-2"></i>
+      <span class="fs-5 fw-bold text-white">Smart HR</span>
+    </div>
+    <ul class="nav nav-pills flex-column mb-auto">
+      <li class="nav-item">
+        <a th:href="@{/}" class="nav-link"><i class="bi bi-grid-fill me-2"></i> ダッシュボード</a>
+      </li>
+      <li>
+        <a href="#" class="nav-link"><i class="bi bi-clock-history me-2"></i> 勤怠実績照会</a>
+      </li>
+      <li>
+        <a th:href="@{/approval/list}" class="nav-link active"><i class="bi bi-file-earmark-check me-2"></i> 電子稟議・申請</a>
+      </li>
+    </ul>
+  </aside>
+
+  <!-- 2. 본문 컨텐츠 (기안서 작성 폼) -->
+  <main class="flex-grow-1 p-4 overflow-auto" style="height: 100vh;">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <div>
+        <h4 class="fw-bold mb-1">電子稟議・申請 作成</h4>
+        <p class="text-muted small mb-0">有給休暇またはテレワーク（在宅勤務）の事前申請を行います。</p>
+      </div>
+      <div>
+        <a th:href="@{/approval/list}" class="btn btn-outline-secondary">
+          <i class="bi bi-list-ul me-1"></i> 申請一覧へ戻る
+        </a>
+      </div>
+    </div>
+
+    <div class="row justify-content-center">
+      <div class="col-lg-8">
+        <div class="card form-card p-4">
+          <!-- 기안서 폼 제출 (POST /approval/new) -->
+          <form th:action="@{/approval/new}" th:object="${requestDTO}" method="post">
+            
+            <!-- 신청 구분 (유급휴가 vs 텔레워크) -->
+            <div class="mb-3">
+              <label class="form-label fw-bold">申請区分 <span class="text-danger">*</span></label>
+              <select class="form-select" th:field="*{docType}" id="docTypeSelect" required>
+                <option value="REMOTE_WORK">テレワーク (在宅勤務申請)</option>
+                <option value="LEAVE">有給休暇 (年休・半休申請)</option>
+              </select>
+            </div>
+
+            <!-- 휴가 세부 구분 (유급휴가 선택 시에만 표시) -->
+            <div class="mb-3" id="leaveSubTypeArea" style="display: none;">
+              <label class="form-label fw-bold">休暇詳細区分</label>
+              <select class="form-select" th:field="*{leaveSubType}" id="leaveSubTypeSelect">
+                <option value="ANNUAL">全日年休 (1.0日 消化)</option>
+                <option value="HALF_AM">午前半休 (0.5日 消化)</option>
+                <option value="HALF_PM">午後半休 (0.5日 消化)</option>
+              </select>
+              <!-- 차감 연차 일수 숨김 필드 -->
+              <input type="hidden" th:field="*{deductDays}" id="deductDaysInput" value="0.0">
+            </div>
+
+            <!-- 신청 건명 -->
+            <div class="mb-3">
+              <label class="form-label fw-bold">申請件名 <span class="text-danger">*</span></label>
+              <input type="text" class="form-control" th:field="*{title}" placeholder="例: システム開発に伴う在宅勤務申請" required>
+            </div>
+
+            <!-- 대상 일자 (시작일 ~ 종료일) -->
+            <div class="row g-3 mb-3">
+              <div class="col-md-6">
+                <label class="form-label fw-bold">開始日 <span class="text-danger">*</span></label>
+                <input type="date" class="form-control" th:field="*{startDate}" id="startDateInput" required>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label fw-bold">終了日 <span class="text-danger">*</span></label>
+                <input type="date" class="form-control" th:field="*{endDate}" id="endDateInput" required>
+              </div>
+            </div>
+
+            <!-- 사유 및 업무 계획 -->
+            <div class="mb-4">
+              <label class="form-label fw-bold">申請理由・業務予定 <span class="text-danger">*</span></label>
+              <textarea class="form-control" th:field="*{reason}" rows="4" placeholder="詳細な事由または在宅時の業務計画を入力してください。" required></textarea>
+            </div>
+
+            <!-- 제출 버튼 -->
+            <div class="d-grid gap-2">
+              <button type="submit" class="btn btn-primary py-2 fw-bold">
+                <i class="bi bi-send-fill me-1"></i> 申請書を提出する
+              </button>
+            </div>
+
+          </form>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- 자바스크립트: 오늘 날짜 기본 세팅 및 휴가 종류에 따른 필드 제어 -->
+<script>
+  const todayStr = new Date().toISOString().split('T')[0];
+  document.getElementById('startDateInput').value = todayStr;
+  document.getElementById('endDateInput').value = todayStr;
+
+  const docTypeSelect = document.getElementById('docTypeSelect');
+  const leaveSubTypeArea = document.getElementById('leaveSubTypeArea');
+  const leaveSubTypeSelect = document.getElementById('leaveSubTypeSelect');
+  const deductDaysInput = document.getElementById('deductDaysInput');
+
+  function updateFormState() {
+    if (docTypeSelect.value === 'LEAVE') {
+      leaveSubTypeArea.style.display = 'block';
+      deductDaysInput.value = leaveSubTypeSelect.value === 'ANNUAL' ? '1.0' : '0.5';
+    } else {
+      leaveSubTypeArea.style.display = 'none';
+      deductDaysInput.value = '0.0';
+    }
+  }
+
+  docTypeSelect.addEventListener('change', updateFormState);
+  leaveSubTypeSelect.addEventListener('change', updateFormState);
+  updateFormState();
+</script>
+
+</body>
+</html>
