@@ -15,14 +15,13 @@
     .sidebar .nav-link { color: #94a3b8; border-radius: 8px; margin-bottom: 4px; padding: 10px 16px; }
     .sidebar .nav-link:hover, .sidebar .nav-link.active { color: #ffffff; background-color: #334155; }
     .table-card { border: none; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
-    /* 문서 제목 링크 호버 효과 */
     .doc-link:hover { text-decoration: underline !important; color: #0d6efd !important; }
   </style>
 </head>
 <body>
 
 <div class="d-flex">
-  <!-- 1. 사이드바 네비게이션 -->
+  <!-- 1. 사이드바 -->
   <aside class="sidebar p-3 d-flex flex-column" style="width: 260px;">
     <div class="d-flex align-items-center mb-4 px-2">
       <i class="bi bi-building-fill-check fs-3 text-primary me-2"></i>
@@ -59,12 +58,12 @@
     </div>
   </aside>
 
-  <!-- 2. 본문 컨텐츠 (신청 목록) -->
+  <!-- 2. 본문 컨텐츠 (한글 제거) -->
   <main class="flex-grow-1 p-4 overflow-auto" style="height: 100vh;">
     <div class="d-flex justify-content-between align-items-center mb-4">
       <div>
         <h4 class="fw-bold mb-1">電子稟議・申請 一覧</h4>
-        <p class="text-muted small mb-0">全社申請書および承認ステータスを確認・管理します。（件名をクリックするとA4詳細書式が開きます）</p>
+        <p class="text-muted small mb-0">社内申請書および承認ステータスを確認・管理します。（件名をクリックするとA4詳細書式が開きます）</p>
       </div>
       <div>
         <a th:href="@{/approval/new}" class="btn btn-primary fw-semibold">
@@ -82,30 +81,25 @@
               <th style="width: 90px;">文書番号</th>
               <th style="width: 120px;">申請区分</th>
               <th style="width: 140px;">申請者</th>
-              <th>申請件名 / 事由 (クリックで詳細表示)</th>
+              <th>申請件名 / 申請事由</th>
               <th style="width: 200px;">対象期間</th>
               <th style="width: 120px;" class="text-center">状態</th>
-              <th style="width: 150px;" class="text-center">詳細 / 決裁</th>
+              <th style="width: 150px;" class="text-center">詳細確認</th>
             </tr>
           </thead>
           <tbody>
-            <!-- 문서가 없을 때 -->
             <tr th:if="${#lists.isEmpty(docs)}">
               <td colspan="7" class="text-center py-4 text-muted">
                 申請された文書が存在しません。新規申請を作成してください。
               </td>
             </tr>
 
-            <!-- 문서 목록 반복 출력 -->
             <tr th:each="doc : ${docs}">
-              <!-- 문서 번호 (클릭 시 A4 상세 페이지 이동) -->
               <td>
                 <a th:href="@{'/approval/detail/' + ${doc.id}}" class="font-monospace text-decoration-none fw-bold text-primary" th:text="'#' + ${doc.id}">
                   #1
                 </a>
               </td>
-
-              <!-- 신청 구분 (재택 / 휴가) -->
               <td>
                 <span th:if="${doc.docType == 'REMOTE_WORK'}" class="badge bg-info-subtle text-info border">
                   テレワーク
@@ -114,30 +108,22 @@
                   有給休暇
                 </span>
               </td>
-
-              <!-- 신청자 -->
               <td>
                 <span class="fw-semibold text-dark" th:text="${doc.user.name}">山田 太郎</span>
                 <span class="text-muted small d-block" th:text="'(' + ${doc.user.employeeNo} + ')'">(20261012)</span>
               </td>
-
-              <!-- 제목 및 사유 (클릭 시 A4 공문서 상세 화면으로 이동) -->
               <td>
                 <a th:href="@{'/approval/detail/' + ${doc.id}}" class="fw-bold text-dark text-decoration-none doc-link d-inline-block mb-1">
                   <span th:text="${doc.title}">APIサーバー開発に伴う在宅勤務申請</span>
                   <i class="bi bi-file-earmark-text text-primary ms-1 small"></i>
                 </a>
                 <div class="text-muted small text-truncate" style="max-width: 320px;" th:text="${doc.reason}">
-                  상세 사유 미리보기
+                  申請事由のプレビュー
                 </div>
               </td>
-
-              <!-- 대상 기간 -->
               <td class="text-muted small">
                 <span th:text="${doc.startDate}">2026-10-20</span> ~ <span th:text="${doc.endDate}">2026-10-20</span>
               </td>
-
-              <!-- 결재 상태 뱃지 -->
               <td class="text-center">
                 <span th:if="${doc.docStatus == 'PENDING'}" class="badge bg-warning text-dark px-2 py-1">
                   審査待ち
@@ -149,11 +135,9 @@
                   却下
                 </span>
               </td>
-
-              <!-- 상세 열람 및 승인 버튼 -->
               <td class="text-center">
                 <a th:href="@{'/approval/detail/' + ${doc.id}}" class="btn btn-sm btn-outline-primary fw-semibold">
-                  <i class="bi bi-search me-1"></i> 詳細確認 (확인)
+                  <i class="bi bi-search me-1"></i> 詳細表示
                 </a>
               </td>
             </tr>

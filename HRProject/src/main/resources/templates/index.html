@@ -18,6 +18,29 @@
     .badge-card { background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); color: white; border-radius: 16px; box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.2); }
     .digital-chip { width: 44px; height: 32px; background: linear-gradient(135deg, #fbbf24 0%, #d97706 100%); border-radius: 6px; display: inline-block; }
     .stat-card { border: none; border-radius: 12px; box-shadow: 0 2px 6px rgba(0,0,0,0.04); }
+    
+    /* 관리자 메뉴 구분 타이틀 밝은 색상 지정 */
+    .admin-menu-header {
+      color: #94a3b8 !important;
+      font-size: 11px;
+      letter-spacing: 0.5px;
+    }
+
+    /* 개발/테스트용 리셋 버튼 (캡처 시 완전히 안 보이도록 배경색 일치) */
+    .btn-stealth-reset {
+      color: #172234 !important; /* 카드 하단 배경색과 일치 */
+      background: transparent !important;
+      border: none !important;
+      font-size: 10px;
+      cursor: default;
+      user-select: none;
+      transition: color 0.2s ease;
+    }
+    /* 마우스를 올렸을 때만 본인 확인용으로 살짝 나타남 */
+    .btn-stealth-reset:hover {
+      color: #475569 !important;
+      cursor: pointer;
+    }
   </style>
 </head>
 <body>
@@ -41,7 +64,8 @@
  		 <a th:href="@{/approval/list}" class="nav-link"><i class="bi bi-file-earmark-check me-2"></i> 電子稟議・申請</a>
 	  </li>
       <hr class="text-secondary my-3">
-      <div class="small text-muted px-3 mb-2 fw-semibold">管理者メニュー</div>
+      <!-- 1. 管理者メニュー 글씨 색상 밝게 개선 -->
+      <div class="admin-menu-header px-3 mb-2 fw-semibold text-uppercase">管理者メニュー</div>
       <li>
         <a href="#" class="nav-link"><i class="bi bi-people-fill me-2"></i> 部署勤怠管理</a>
       </li>
@@ -58,7 +82,11 @@
         </div>
         <div>
           <div class="text-white small fw-bold" th:text="${loginUser.name} + ' ' +${loginUser.position}">山田 太郎</div>
-          <div class="text-muted" style="font-size: 11px;" th:text="${loginUser.department != null ? loginUser.department.deptName : '未配属'}">開発1チーム</div>
+          <!-- 소속 부서 일본어 표기 -->
+          <div class="text-muted" style="font-size: 11px;" 
+               th:text="${loginUser.department != null ? (loginUser.department.deptName == '개발1팀' ? '開発1チーム' : loginUser.department.deptName) : '未配属'}">
+            開発1チーム
+          </div>
         </div>
       </div>
       <form th:action="@{/logout}" method="post" class="m-0">
@@ -96,7 +124,10 @@
               </div>
               <div>
                 <h5 class="fw-bold mb-1 text-white" th:text="${loginUser.name} + ' (' +${loginUser.position} + ')'">社員名 (役職)</h5>
-                <div class="text-white-50 small" th:text="'所属: ' + (${loginUser.department != null ? loginUser.department.deptName : '未配属'})">所属: 開発1チーム</div>
+                <div class="text-white-50 small" 
+                     th:text="'所属: ' + (${loginUser.department != null ? (loginUser.department.deptName == '개발1팀' ? '開発1チーム' : loginUser.department.deptName) : '未配属'})">
+                  所属: 開発1チーム
+                </div>
                 <div class="text-white-50 small font-monospace" th:text="'社員番号: ' + ${loginUser.employeeNo}">社員番号: 20261012</div>
               </div>
             </div>
@@ -149,10 +180,10 @@
               <i class="bi bi-check-circle-fill fs-5 me-1"></i> 本日の業務終了
             </button>
 
-            <!-- 개발/테스트용 오늘 근태 리셋 버튼 -->
+            <!-- 2. 개발/테스트용 리셋 버튼: 캡처 시 완전히 숨겨지는 스텔스 버튼 -->
             <div class="text-end mt-2">
-              <button type="button" class="btn btn-link btn-sm text-white-50 text-decoration-none p-0" id="btnResetToday" style="font-size: 11px;">
-                <i class="bi bi-arrow-counterclockwise"></i> [Dev] 本日の打刻をリセット (초기화)
+              <button type="button" class="btn-stealth-reset p-0" id="btnResetToday" title="Reset Today Attendance">
+                [Dev] Reset
               </button>
             </div>
           </div>
@@ -173,8 +204,10 @@
           <div class="col-sm-6">
             <div class="card stat-card p-3 text-center">
               <div class="text-muted small mb-1">権限ロール</div>
-              <div class="fs-4 fw-bold text-dark">
-                <span th:text="${loginUser.role}">ROLE_USER</span>
+              <div class="fs-5 fw-bold text-dark mt-1">
+                <span th:if="${loginUser.role == 'ROLE_USER'}">一般社員 (ユーザー)</span>
+                <span th:if="${loginUser.role == 'ROLE_MANAGER'}">管理者 (承認権限)</span>
+                <span th:if="${loginUser.role != 'ROLE_USER' and loginUser.role != 'ROLE_MANAGER'}" th:text="${loginUser.role}">ROLE_USER</span>
               </div>
             </div>
           </div>
@@ -184,7 +217,7 @@
         <div class="card stat-card p-4">
           <div class="d-flex justify-content-between align-items-center mb-3">
             <h6 class="fw-bold mb-0"><i class="bi bi-file-earmark-text text-primary me-2"></i>直近の申請・承認状況</h6>
-            <a href="#" class="text-decoration-none small text-muted">もっと見る <i class="bi bi-chevron-right"></i></a>
+            <a th:href="@{/approval/list}" class="text-decoration-none small text-muted">もっと見る <i class="bi bi-chevron-right"></i></a>
           </div>
           <div class="table-responsive">
             <table class="table table-hover align-middle mb-0" style="font-size: 13px;">

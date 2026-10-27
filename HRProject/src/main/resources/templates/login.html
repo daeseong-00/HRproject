@@ -22,6 +22,41 @@
       box-shadow: 0 20px 40px rgba(0,0,0,0.4);
       border: 1px solid #334155;
     }
+    /* 사원번호/비밀번호 라벨 글씨 색상 밝게 고정 */
+    .form-label-custom {
+      color: #f1f5f9 !important;
+      font-weight: 500;
+      font-size: 14px;
+    }
+    /* 입력창 글씨 색상 흰색 강제 적용 및 다크 배경 유지 */
+    .custom-input {
+      background-color: #0f172a !important;
+      color: #ffffff !important;
+      border-color: #334155 !important;
+    }
+    .custom-input::placeholder {
+      color: #64748b !important;
+    }
+    .custom-input:focus {
+      background-color: #0f172a !important;
+      color: #ffffff !important;
+      border-color: #3b82f6 !important;
+      box-shadow: 0 0 0 0.25rem rgba(59, 130, 246, 0.25) !important;
+    }
+    /* 크롬/엣지 자동완성 시 글씨 검은색으로 변하는 현상 방지 */
+    .custom-input:-webkit-autofill,
+    .custom-input:-webkit-autofill:hover, 
+    .custom-input:-webkit-autofill:focus {
+      -webkit-text-fill-color: #ffffff !important;
+      -webkit-box-shadow: 0 0 0px 1000px #0f172a inset !important;
+      transition: background-color 5000s ease-in-out 0s;
+    }
+    /* 좌측 아이콘 박스 색상 */
+    .input-icon-box {
+      background-color: #0f172a !important;
+      border-color: #334155 !important;
+      color: #94a3b8 !important;
+    }
   </style>
 </head>
 <body>
@@ -32,7 +67,7 @@
       <i class="bi bi-building-fill-check fs-2"></i>
     </div>
     <h4 class="fw-bold">Smart HR ポータル</h4>
-    <p class="text-muted small">社員番号とパスワードを入力してください。</p>
+    <p class="text-white-50 small mb-0">社員番号とパスワードを入力してください。</p>
   </div>
 
   <!-- エラー / ログアウト メッセージ -->
@@ -45,29 +80,27 @@
 
   <form th:action="@{/login-process}" method="post">
     <div class="mb-3">
-      <label for="employeeNo" class="form-label small text-muted">社員番号</label>
+
+      <label for="employeeNo" class="form-label form-label-custom">社員番号</label>
       <div class="input-group">
-        <span class="input-group-text bg-dark border-secondary text-secondary"><i class="bi bi-person-badge"></i></span>
-        <input type="text" class="form-control bg-dark border-secondary text-white" id="employeeNo" name="employeeNo" placeholder="例: 20261012" value="20261012" required>
+        <span class="input-group-text input-icon-box"><i class="bi bi-person-badge"></i></span>
+        <input type="text" class="form-control custom-input" id="employeeNo" name="employeeNo" placeholder="例: 20261012" required>
       </div>
     </div>
 
     <div class="mb-4">
-      <label for="password" class="form-label small text-muted">パスワード</label>
+
+      <label for="password" class="form-label form-label-custom">パスワード</label>
       <div class="input-group">
-        <span class="input-group-text bg-dark border-secondary text-secondary"><i class="bi bi-lock"></i></span>
-        <input type="password" class="form-control bg-dark border-secondary text-white" id="password" name="password" placeholder="パスワードを入力" value="1234" required>
+        <span class="input-group-text input-icon-box"><i class="bi bi-lock"></i></span>
+        <input type="password" class="form-control custom-input" id="password" name="password" placeholder="パスワードを入力" required>
       </div>
     </div>
 
-    <button type="submit" class="btn btn-primary w-100 py-2 fw-semibold">
+    <button type="submit" class="btn btn-primary w-100 py-2 fw-semibold shadow">
       ログイン
     </button>
   </form>
-
-  <div class="text-center text-muted small mt-4">
-    * テスト用アカウント: 社員番号 <code>20261012</code> / パスワード <code>1234</code>
-  </div>
 </div>
 
 </body>

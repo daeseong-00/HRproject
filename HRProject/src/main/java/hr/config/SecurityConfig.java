@@ -11,7 +11,7 @@ import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 @EnableWebSecurity
-@EnableMethodSecurity // @PreAuthorize 어노테이션 활성화
+@EnableMethodSecurity 
 public class SecurityConfig {
 
     @Bean
@@ -22,7 +22,7 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-            .csrf(csrf -> csrf.disable()) // 개발 및 Ajax 편의를 위해 비활성화
+            .csrf(csrf -> csrf.disable()) 
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/login", "/css/**", "/js/**", "/images/**").permitAll()
                 .requestMatchers("/api/**").authenticated()
